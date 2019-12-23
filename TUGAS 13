@@ -1,0 +1,288 @@
+#include <iostream>
+#include <cstdlib>
+#include <conio.h>
+
+using namespace std;
+
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+
+class Simpul_SBBST
+{
+	public:
+		int tinggi, data;
+		Simpul_SBBST *kiri, *kanan;
+		
+	Simpul_SBBST()
+	{
+		kiri = NULL;
+		kanan = NULL;
+		data = 0;
+		tinggi = 0;
+	}
+	
+	Simpul_SBBST(int n)
+	{
+		kiri = NULL;
+		kanan = NULL;
+		data = 0;
+		tinggi = 0;
+	}
+};
+
+
+class PohonBSTSeimbang
+{
+	private:
+		Simpul_SBBST *akar;
+		
+	public:
+		PohonBSTSeimbang()
+		{
+			akar = NULL;
+		}
+		
+		bool apaKosong()
+		{
+			return akar == NULL;
+		}
+		
+		void membuatKosong()
+		{
+			akar = NULL;
+		}
+		
+		void sisip(int data)
+		{
+			akar = sisip(data, akar);
+		}
+		
+		int tinggi(Simpul_SBBST *t)
+		{
+			return t == NULL ?-1 : t->tinggi;
+		}
+		
+		int maks(int lhs, int rhs)
+		{
+			return lhs > rhs ? lhs : rhs;
+		}
+		
+		Simpul_SBBST *sisip(int x, Simpul_SBBST *t)
+		{
+			if (t==NULL)
+				t= new Simpul_SBBST(x);
+			else if (x<t->data)
+			{
+				t->kiri=sisip(x, t->kiri);
+				if(tinggi(t->kiri)-tinggi(t->kanan)==2)
+				if(x<t->kiri->data)
+					t=rotasiDenganAnakKiri(t);
+				else
+					t=doubleDenganAnakKiri(t);
+			}
+			else if(x>t->data)
+			{
+				t->kanan = sisip(x,t->kanan);
+				if(tinggi(t->kanan)- tinggi(t->kiri)==2)
+					if(x>t->kanan->data)
+						t=rotasiDenganAnakKanan(t);
+					else
+						t=doubleDenganAnakKanan(t);
+			}
+			t->tinggi = maks(tinggi(t->kiri), tinggi(t->kanan))+1;
+			return t;
+		}
+		
+		Simpul_SBBST *rotasiDenganAnakKiri(Simpul_SBBST *k2)
+		{
+			Simpul_SBBST *k1 = k2->kiri;
+			k2->kiri = k1->kanan;
+			k1->kanan = k2;
+			k2->tinggi = maks(tinggi(k2->kiri), tinggi(k2->kanan))+1;
+			k1->tinggi = maks(tinggi(k1->kiri), k2->tinggi)+1;
+			return k1;
+		}
+		
+		Simpul_SBBST *rotasiDenganAnakKanan(Simpul_SBBST *k1)
+		{
+			Simpul_SBBST *k2 = k1->kanan;
+			k1->kanan = k2->kiri;
+			k2->kiri =k1;
+			k1->tinggi = maks(tinggi(k1->kiri), tinggi(k1->kanan))+1;
+			k2->tinggi = maks(tinggi(k2->kanan), k1->tinggi)+1;
+			return k2;
+		}
+		
+		Simpul_SBBST *doubleDenganAnakKiri(Simpul_SBBST *k3)
+		{
+			k3->kiri = rotasiDenganAnakKanan(k3->kiri);
+			return rotasiDenganAnakKiri(k3);
+		}
+		
+		Simpul_SBBST *dubleDenganAnakKanan(Simpul_SBBST *k1)
+		{
+			k1->kanan = rotasiDenganAnakKiri(k1->kanan);
+			return rotasiDenganAnakKanan(k1);
+		}
+		
+		int hitungSimpul()
+		{
+			return hitungSimpul(akar);
+		}
+		
+		int hitunSimpul(Simpul_SBBST *r)
+		{
+			if(r == NULL)
+				return 0;
+			else
+			{
+				int l=1;
+				l +=hitungSimpul(r->kiri);
+				l +=hitungSimpul(r->kanan);
+				return l;
+			}
+		}
+		
+		bool cari(int nil)
+		{
+			return cari(akar, nil);
+		}
+		
+		bool cari(Simpul_SBBST *r, int nil)
+		{
+			bool ditemukan = false;
+			while ((r !=NULL)&& !ditemukan)
+			{
+				int nilaiKanan = r->data;
+				if(nil<nilaiKanan)
+					r = r->kiri;
+				else if (nil>nilaiKanan)
+					r = r->kanan;
+				else
+				{
+					ditemukan = true;
+					break;
+				}
+				ditemukan = cari(r, nil);
+			}
+			return ditemuakn;
+		}
+		
+		void inorder()
+		{
+			inorder(akar);
+		}
+		
+		void inorder(Simpul_SBBST *r)
+		{
+			if (r != NULL)
+			{
+				inorder(r->kiri);
+				cout<<r->data<<"";
+				inorder(r->kanan);
+			}
+		}
+		
+		void preorder()
+		{
+			preorder(akar);
+		}
+		
+		void preorder(Simpul_SBBST *r)
+		{
+			if (r != NULL)
+			{
+				cout<<r->data<<"";
+				preorder(r->kiri);
+				preorder(r->kanan);
+			}
+		}
+		
+		void postorder()
+		{
+			postorder(akar);
+		}
+		
+		void postorder(Simpul_SBBST *r)
+		{
+			if(r != NULL)
+			{
+				postorder(r->kiri);
+				postorder(r->kanan);
+				cout<<r->data<<"";
+			}
+		}
+};
+
+
+int main() 
+{
+	PohonBSTSeimbang sbbst;
+	cout<<"Ujian Pohon BST Seimbang\n";
+	int nil;
+	char ch;
+	
+	do
+	{
+		cout<<"\nOperasi-Operasi Pohon BST Seimbang\n";
+		cout<<"1. Sisip"<<endl;
+		cout<<"2. Hitung Simpul"<<endl;
+		cout<<"3. Cari"<<endl;
+		cout<<"4. Priksa Kosong"<<endl;
+		cout<<"5. Membuat Kosong"<<endl;
+		
+		intpilihan
+		cout<<"Masukan pilihan Anda: ";
+		cin>>pilihan;
+		
+		switch (pilihan)
+		{
+			case 1:
+				cout<<"Masukan elemen integer yang akan disisipkan :";
+				cin>> nil;
+				sbbst.sisip(nil);
+				break;
+				
+			case 2:
+				cout<<"Simpul = " <<sbbst.hitungSimpul()<<endl;
+				break;
+				
+			case 3:
+				cout<<"Masukan element integer yang akan dicari: ";
+				cin>>nil;
+				if(sbbst.cari(nil))
+					cout<<nil<<" ditemukan didalam pohon"<<endl;
+				else
+					cout<<nil<<"tidak ditemukan"<<endl;
+				break;
+				
+			case 4:
+				cout<<"Status Kosong :";
+				if(sbbst.apaKosong())
+					cout<<"Pohon kosong"<<endl;
+				else
+					cou<<"Pohon tidak kosong"<<endl;
+				break;
+				
+			case 5:
+				cout<<"\nPohon dikosongkan\n";
+				sbbst.membuatKosong();
+				break;
+				
+			defaul:
+				cout<<"Entri salah \n";
+				break;
+		}
+		
+		cout<<"\nPost Order: ";
+		sbbst.postorder();
+		cout<<"\nPre Order: ";
+		sbbst.preorder();
+		cout<<"\nIn Order: ";
+		sbbst.inorder();
+		cout<<"\nAnda ingin melanjutkan (ketik y atau t) : ";
+		cin>>ch;
+	}
+	while (ch=='Y' || ch== 'T');
+	getch();
+	return 0;
+}
